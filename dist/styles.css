@@ -1,0 +1,13 @@
+body {
+	background: #353535;
+	margin: 0;
+	padding: 0;
+}
+
+.icon {
+	width: 150px;
+	height: 150px;
+	float: left;
+	margin: 10px;
+	background: #444;
+}
