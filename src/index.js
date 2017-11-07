@@ -10,11 +10,15 @@ const WIDTH 		= 1024;
 const HEIGHT 		= 768;
 const FRAMERATE 	= 30;
 const BG_COLOR		= [50, 20, 30];
-const NB_EMBLEMS	= 800;
-const EMBLEM_WIDTH	= 30;
-const EMBLEM_HEIGHT	= 30;
-const HUE_TRESHOLD	= 50;
-const SIZE_TRESHOLD = 0.9;
+const EMBLEM_PER_ROW= 24;
+const EMBLEM_PER_COL= 24;
+const EMBLEM_WIDTH	= WIDTH/EMBLEM_PER_ROW;
+const EMBLEM_HEIGHT	= HEIGHT/EMBLEM_PER_COL;
+const NB_EMBLEMS	= EMBLEM_PER_ROW * EMBLEM_PER_COL;
+const HUE_TRESHOLD	= 20;
+const SATURATION	= 60;
+const LUMINOSITY	= 80;
+const SIZE_TRESHOLD = .7;
 
 const sketch = function(p) {
 
@@ -31,8 +35,8 @@ const sketch = function(p) {
 
 	const getCoordinates = function(idx) {
 		return {
-			x: (EMBLEM_WIDTH * idx) % WIDTH,
-			y: (idx === 0) ? 0 : Math.round(( (idx) * EMBLEM_WIDTH) / WIDTH) * EMBLEM_HEIGHT
+			x: Math.floor((EMBLEM_WIDTH * idx) % WIDTH),
+			y: (idx === 0) ? 0 : Math.floor((EMBLEM_WIDTH * idx) / WIDTH) * EMBLEM_HEIGHT
 		};
 	}
 
@@ -49,7 +53,7 @@ const sketch = function(p) {
 			let coords = getCoordinates(i);
 			let sizes = getRandomSizes(EMBLEM_WIDTH, EMBLEM_HEIGHT);
 			emblems.push({
-				color: [avoidLimits(mainHue + (plusOrMinus() * p.random(HUE_TRESHOLD)), 0, 255), 60, 70],
+				color: [avoidLimits(mainHue + (plusOrMinus() * p.random(HUE_TRESHOLD)), 0, 255), SATURATION, LUMINOSITY],
 				posX: coords.x + (EMBLEM_WIDTH/2),
 				posY: coords.y + (EMBLEM_HEIGHT/2),
 				width: sizes.width,
