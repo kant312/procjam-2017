@@ -10,13 +10,14 @@ const WIDTH 		= 1024;
 const HEIGHT 		= 768;
 const FRAMERATE 	= 60;
 const BG_COLOR		= [50, 20, 30];
-const HUE_TRESHOLD	= 20;
 const SATURATION	= 60;
 const LUMINOSITY	= 80;
-const SIZE_TRESHOLD = 1.7;
+const SIZE_THRESHOLD = 1.7;
 
-let emblemsPerRow = 24;
-let emblemsPerCol = 24;
+let hueThreshold	= 20;
+let emblemsPerRow 	= 24;
+let emblemsPerCol 	= 24;
+let isPlaying		= true;
 
 const sketch = function(p) {
 
@@ -66,7 +67,7 @@ const sketch = function(p) {
 		let coords = getCoordinates(i);
 		let sizes = getRandomSizes(emblemWidth, emblemHeight);
 		let emblem = {
-			color: [avoidLimits(mainHue + (plusOrMinus() * p.random(HUE_TRESHOLD)), 0, 255), SATURATION, LUMINOSITY],
+			color: [avoidLimits(mainHue + (plusOrMinus() * p.random(hueThreshold)), 0, 255), SATURATION, LUMINOSITY],
 			posX: coords.x + (emblemWidth/2),
 			posY: coords.y + (emblemHeight/2),
 			width: sizes.width,
@@ -79,9 +80,9 @@ const sketch = function(p) {
 
 	const changeEmblemSize = function(emblem) {
 		const newEmblem = Object.assign(emblem);
-		newEmblem.width = avoidLimits(newEmblem.width + (SIZE_TRESHOLD * plusOrMinus()), 0, emblemWidth);
-		newEmblem.height = avoidLimits(newEmblem.height + (SIZE_TRESHOLD * plusOrMinus()), 0, emblemHeight);
-		newEmblem.rotation = newEmblem.rotation + ((SIZE_TRESHOLD)/100) % Math.PI*2;
+		newEmblem.width = avoidLimits(newEmblem.width + (SIZE_THRESHOLD * plusOrMinus()), 0, emblemWidth);
+		newEmblem.height = avoidLimits(newEmblem.height + (SIZE_THRESHOLD * plusOrMinus()), 0, emblemHeight);
+		newEmblem.rotation = newEmblem.rotation + ((SIZE_THRESHOLD)/100) % Math.PI*2;
 
 		return newEmblem;
 	}
@@ -115,6 +116,10 @@ const sketch = function(p) {
 	 * Render one frame
 	 */
 	p.draw = function() {
+		if(!isPlaying) {
+			return;
+		}
+
 		p.background(...BG_COLOR);
 		emblems = emblems.map( e => changeEmblemSize(e) );
 		emblems.map( e => renderEmblem(e) );
@@ -134,8 +139,10 @@ const sketch = function(p) {
 	 * Controls 
 	 */
 	const controls = function(form) {
+		let playPause = form.querySelector('#playPause');
 		let nbQuadsPerRow = form.querySelector('#nbQuadsPerRow');
 		let nbQuadsPerCol = form.querySelector('#nbQuadsPerCol');
+		let hueThresholdInput = form.querySelector('#hueThreshold');
 
 		const initControls = function() {
 			nbQuadsPerRow.value = emblemsPerRow;
@@ -148,6 +155,16 @@ const sketch = function(p) {
 			nbQuadsPerCol.addEventListener('input', (e) => {
 				emblemsPerCol = e.target.value;
 				init();
+			});
+
+			playPause.addEventListener('click', (e) => {
+				isPlaying = !isPlaying;
+				e.target.value = (isPlaying) ? 'Pause' : 'Play';
+			});
+
+			hueThresholdInput.value = hueThreshold;
+			hueThresholdInput.addEventListener('input', (e) => {
+				hueThreshold = e.target.value;
 			});
 		};
 

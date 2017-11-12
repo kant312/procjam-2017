@@ -8,6 +8,7 @@ body {
 }
 
 canvas {
+	clear: both;
 	margin: 1em auto 0 auto;
 }
 
@@ -21,4 +22,9 @@ input {
 	background: #555555;
 	color: #dedede;
 	font-family: monospace, sans-serif;
+}
+
+.controls__col {
+	float: left;
+	width: 33%;
 }

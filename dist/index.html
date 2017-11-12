@@ -9,12 +9,17 @@
 </head>
 <body>
 	<form action="" id="controls">
-		<p>
+		<div class="controls__col">
+			<input type="button" id="playPause" value="Pause" />
 			<label for="nbQuadsPerRow">Quadrilateral per row:</label>
-			<input id="nbQuadsPerRow" type="number" min="1">
+			<input id="nbQuadsPerRow" type="number" min="1" />
 			<label for="nbQuadsPerCol">Quadrilateral per col:</label>
-			<input id="nbQuadsPerCol" type="number" min="1">
-		</p>
+			<input id="nbQuadsPerCol" type="number" min="1" />
+		</div>
+		<div class="controls__col">
+			<label>Color change threshold</label>
+			<input type="number" id="hueThreshold" min="1" max="255"/>
+		</div>
 	</form>
 	<script src="bundle.js"></script>
 </body>
