@@ -20,7 +20,11 @@
 		</div>
 		<div class="controls__col">
 			<label for="hueThreshold">Color change threshold</label>
-			<input type="range" id="hueThreshold" min="1" max="255"/>
+			<input type="range" id="hueThreshold" min="1" max="255" step="1"/>
+			<label for="sizeThreshold">Size threshold</label>
+			<input type="range" id="sizeThreshold" min="1" max="10" step="1"/>
+		</div>
+		<div class="controls__col">
 			<label>
 				<input type="checkbox" id="cycleRegenerationCheckbox" />
 				Cycle regeneration
@@ -29,8 +33,7 @@
 				<input type="checkbox" id="randomCoordinatesCheckbox" />
 				Random coordinates
 			</label>
-		</div>
-		<div class="controls__col">
+			<hr>
 			<input type="button" id="saveCanvasButton" value="Export image">
 		</div>
 	</form>

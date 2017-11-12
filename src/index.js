@@ -12,32 +12,33 @@ const FRAMERATE 	= 30;
 const BG_COLOR		= [50, 20, 30];
 const SATURATION	= 60;
 const LUMINOSITY	= 80;
-const SIZE_THRESHOLD = 1.7;
+const ROTATION_SPEED= 1.7;
 
+let sizeThreshold 	= 1.7;
 let hueThreshold	= 20;
-let emblemsPerRow 	= 24;
-let emblemsPerCol 	= 24;
+let quadsPerRow 	= 24;
+let quadsPerCol 	= 24;
 let isPlaying		= true;
 let isCycleRegenerationEnabled = true;
 let isRandomCoordinatesEnabled = false;
 
 const sketch = function(p) {
 
-	let emblems = [];
-	let emblemWidth	= WIDTH/emblemsPerRow;
-	let emblemHeight = HEIGHT/emblemsPerCol;
-	let maxEmblems = emblemsPerRow * emblemsPerCol;
-	let nbEmblems = 0;
+	let quads = [];
+	let quadWidth	= WIDTH/quadsPerRow;
+	let quadHeight = HEIGHT/quadsPerCol;
+	let maxQuads = quadsPerRow * quadsPerCol;
+	let nbQuads = 0;
 	let mainHue = 0;
 	let loopIdx = 0;
 	let startTime = new Date().getTime();
 
 	const init = () => {
-		emblems = [];
-		emblemWidth	= WIDTH/emblemsPerRow;
-		emblemHeight = HEIGHT/emblemsPerCol;
-		maxEmblems = emblemsPerRow * emblemsPerCol;
-		nbEmblems = 0;
+		quads = [];
+		quadWidth	= WIDTH/quadsPerRow;
+		quadHeight = HEIGHT/quadsPerCol;
+		maxQuads = quadsPerRow * quadsPerCol;
+		nbQuads = 0;
 	  	mainHue = p.random(255);
 		loopIdx = 0;
 	};
@@ -53,8 +54,8 @@ const sketch = function(p) {
 
 	const getCoordinates = function(idx) {
 		return {
-			x: Math.floor((emblemWidth * idx) % WIDTH),
-			y: (idx === 0) ? 0 : Math.floor((emblemWidth * idx) / WIDTH) * emblemHeight
+			x: Math.floor((quadWidth * idx) % WIDTH),
+			y: (idx === 0) ? 0 : Math.floor((quadWidth * idx) / WIDTH) * quadHeight
 		};
 	}
 
@@ -65,36 +66,36 @@ const sketch = function(p) {
 		}
 	}
 
-	const generateEmblem = function(i, hue) {
-		let coords = (isRandomCoordinatesEnabled) ? getCoordinates(p.random(maxEmblems)) : getCoordinates(i);
-		let sizes = getRandomSizes(emblemWidth, emblemHeight);
-		let emblem = {
+	const generateQuad = function(i, hue) {
+		let coords = (isRandomCoordinatesEnabled) ? getCoordinates(p.random(maxQuads)) : getCoordinates(i);
+		let sizes = getRandomSizes(quadWidth, quadHeight);
+		let quad = {
 			color: [avoidLimits(mainHue + (plusOrMinus() * p.random(hueThreshold)), 0, 255), SATURATION, LUMINOSITY],
-			posX: coords.x + (emblemWidth/2),
-			posY: coords.y + (emblemHeight/2),
+			posX: coords.x + (quadWidth/2),
+			posY: coords.y + (quadHeight/2),
 			width: sizes.width,
 			height: sizes.height,
 			rotation: p.random(Math.PI * 2)
 		};
 
-		return emblem;
+		return quad;
 	}
 
-	const changeEmblemSize = function(emblem) {
-		const newEmblem = Object.assign(emblem);
-		newEmblem.width = avoidLimits(newEmblem.width + (SIZE_THRESHOLD * plusOrMinus()), 0, emblemWidth);
-		newEmblem.height = avoidLimits(newEmblem.height + (SIZE_THRESHOLD * plusOrMinus()), 0, emblemHeight);
-		newEmblem.rotation = newEmblem.rotation + ((SIZE_THRESHOLD)/100) % Math.PI*2;
+	const changeQuadSize = function(quad) {
+		const newQuad = Object.assign(quad);
+		newQuad.width = avoidLimits(newQuad.width + (sizeThreshold 	* plusOrMinus()), 0, quadWidth);
+		newQuad.height = avoidLimits(newQuad.height + (sizeThreshold 	* plusOrMinus()), 0, quadHeight);
+		newQuad.rotation = newQuad.rotation + ((ROTATION_SPEED)	/100) % Math.PI*2;
 
-		return newEmblem;
+		return newQuad;
 	}
 
-	const renderEmblem = function(emblem) {
+	const renderQuad = function(quad) {
 		p.push();
-		p.fill(...emblem.color);
-		p.translate(emblem.posX, emblem.posY);
-		p.rotate(emblem.rotation);
-		p.rect(0, 0, emblem.width, emblem.height);
+		p.fill(...quad.color);
+		p.translate(quad.posX, quad.posY);
+		p.rotate(quad.rotation);
+		p.rect(0, 0, quad.width, quad.height);
 		p.pop();
 	}
 	
@@ -122,17 +123,17 @@ const sketch = function(p) {
 		}
 
 		p.background(...BG_COLOR);
-		emblems = emblems.map( e => changeEmblemSize(e) );
-		emblems.map( e => renderEmblem(e) );
+		quads = quads.map( e => changeQuadSize(e) );
+		quads.map( e => renderQuad(e) );
 
-		if( maxEmblems > nbEmblems ) {
-			emblems.push(generateEmblem(nbEmblems, mainHue));
-			nbEmblems++;
+		if( maxQuads > nbQuads ) {
+			quads.push(generateQuad(nbQuads, mainHue));
+			nbQuads++;
 		}
 		else if(isCycleRegenerationEnabled) {
 			mainHue = (loopIdx == 0) ? p.random(255) : mainHue;
-			emblems[loopIdx] = generateEmblem(loopIdx, mainHue);
-			loopIdx = (loopIdx + 1) % maxEmblems;
+			quads[loopIdx] = generateQuad(loopIdx, mainHue);
+			loopIdx = (loopIdx + 1) % maxQuads;
 		}
 	}
 
@@ -151,20 +152,21 @@ const sketch = function(p) {
 		let nbQuadsPerRow = form.querySelector('#nbQuadsPerRow');
 		let nbQuadsPerCol = form.querySelector('#nbQuadsPerCol');
 		let hueThresholdInput = form.querySelector('#hueThreshold');
+		let sizeThresholdInput = form.querySelector('#sizeThreshold');
 		let saveCanvasButton = form.querySelector('#saveCanvasButton');
 		let cycleRegenerationCheckbox = form.querySelector('#cycleRegenerationCheckbox');
 		let randomCoordinatesCheckbox = form.querySelector('#randomCoordinatesCheckbox');
 
 		const initControls = function() {
-			nbQuadsPerRow.value = emblemsPerRow;
+			nbQuadsPerRow.value = quadsPerRow;
 			nbQuadsPerRow.addEventListener('input', (e) => {
-				emblemsPerRow = e.target.value;
+				quadsPerRow = e.target.value;
 				init();
 			});
 
-			nbQuadsPerCol.value = emblemsPerCol;
+			nbQuadsPerCol.value = quadsPerCol;
 			nbQuadsPerCol.addEventListener('input', (e) => {
-				emblemsPerCol = e.target.value;
+				quadsPerCol = e.target.value;
 				init();
 			});
 
@@ -176,6 +178,11 @@ const sketch = function(p) {
 			hueThresholdInput.value = hueThreshold;
 			hueThresholdInput.addEventListener('input', (e) => {
 				hueThreshold = e.target.value;
+			});
+
+			sizeThresholdInput.value = sizeThreshold;
+			sizeThresholdInput.addEventListener('input', (e) => {
+				sizeThreshold = e.target.value;
 			});
 
 			saveCanvasButton.addEventListener('click', (e) => {
