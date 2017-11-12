@@ -136,6 +136,13 @@ const sketch = function(p) {
 	}
 
 	/**
+	 * Export the image
+	 */
+	const exportImage = () => {
+		p.saveCanvas('quadrilaterals', 'png');
+	};
+
+	/**
 	 * Controls 
 	 */
 	const controls = function(form) {
@@ -143,6 +150,7 @@ const sketch = function(p) {
 		let nbQuadsPerRow = form.querySelector('#nbQuadsPerRow');
 		let nbQuadsPerCol = form.querySelector('#nbQuadsPerCol');
 		let hueThresholdInput = form.querySelector('#hueThreshold');
+		let saveCanvasButton = form.querySelector('#saveCanvasButton');
 
 		const initControls = function() {
 			nbQuadsPerRow.value = emblemsPerRow;
@@ -165,6 +173,10 @@ const sketch = function(p) {
 			hueThresholdInput.value = hueThreshold;
 			hueThresholdInput.addEventListener('input', (e) => {
 				hueThreshold = e.target.value;
+			});
+
+			saveCanvasButton.addEventListener('click', (e) => {
+				exportImage();
 			});
 		};
 
