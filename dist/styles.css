@@ -7,6 +7,10 @@ body {
 	width: 1024px;
 }
 
+h1 {
+	font-size: 1em;
+}
+
 canvas {
 	clear: both;
 	margin: 1em auto 0 auto;
@@ -22,6 +26,10 @@ input {
 	background: #555555;
 	color: #dedede;
 	font-family: monospace, sans-serif;
+}
+
+input[type=button] {
+	padding: .2em .8em;
 }
 
 .controls__col {

@@ -8,7 +8,7 @@ const p5 = require ('./libs/p5.min.js');
  */
 const WIDTH 		= 1024;
 const HEIGHT 		= 768;
-const FRAMERATE 	= 60;
+const FRAMERATE 	= 30;
 const BG_COLOR		= [50, 20, 30];
 const SATURATION	= 60;
 const LUMINOSITY	= 80;
@@ -18,6 +18,8 @@ let hueThreshold	= 20;
 let emblemsPerRow 	= 24;
 let emblemsPerCol 	= 24;
 let isPlaying		= true;
+let isCycleRegenerationEnabled = true;
+let isRandomCoordinatesEnabled = false;
 
 const sketch = function(p) {
 
@@ -36,7 +38,7 @@ const sketch = function(p) {
 		emblemHeight = HEIGHT/emblemsPerCol;
 		maxEmblems = emblemsPerRow * emblemsPerCol;
 		nbEmblems = 0;
-		mainHue = 0;
+	  	mainHue = p.random(255);
 		loopIdx = 0;
 	};
 	
@@ -64,7 +66,7 @@ const sketch = function(p) {
 	}
 
 	const generateEmblem = function(i, hue) {
-		let coords = getCoordinates(i);
+		let coords = (isRandomCoordinatesEnabled) ? getCoordinates(p.random(maxEmblems)) : getCoordinates(i);
 		let sizes = getRandomSizes(emblemWidth, emblemHeight);
 		let emblem = {
 			color: [avoidLimits(mainHue + (plusOrMinus() * p.random(hueThreshold)), 0, 255), SATURATION, LUMINOSITY],
@@ -106,7 +108,6 @@ const sketch = function(p) {
 	  	p.noStroke();
 	  	p.colorMode(p.HSB);
 	  	p.rectMode(p.CENTER);
-	  	mainHue = p.random(255);
 		p.createCanvas(WIDTH, HEIGHT);
 
 		init();
@@ -128,7 +129,7 @@ const sketch = function(p) {
 			emblems.push(generateEmblem(nbEmblems, mainHue));
 			nbEmblems++;
 		}
-		else {
+		else if(isCycleRegenerationEnabled) {
 			mainHue = (loopIdx == 0) ? p.random(255) : mainHue;
 			emblems[loopIdx] = generateEmblem(loopIdx, mainHue);
 			loopIdx = (loopIdx + 1) % maxEmblems;
@@ -151,6 +152,8 @@ const sketch = function(p) {
 		let nbQuadsPerCol = form.querySelector('#nbQuadsPerCol');
 		let hueThresholdInput = form.querySelector('#hueThreshold');
 		let saveCanvasButton = form.querySelector('#saveCanvasButton');
+		let cycleRegenerationCheckbox = form.querySelector('#cycleRegenerationCheckbox');
+		let randomCoordinatesCheckbox = form.querySelector('#randomCoordinatesCheckbox');
 
 		const initControls = function() {
 			nbQuadsPerRow.value = emblemsPerRow;
@@ -177,6 +180,26 @@ const sketch = function(p) {
 
 			saveCanvasButton.addEventListener('click', (e) => {
 				exportImage();
+			});
+
+			if(isCycleRegenerationEnabled) {
+				cycleRegenerationCheckbox.setAttribute('checked', 'checked');
+			}
+			else {
+				cycleRegenerationCheckbox.removeAttribute('checked');
+			}
+			cycleRegenerationCheckbox.addEventListener('click', (e) => {
+				isCycleRegenerationEnabled = !isCycleRegenerationEnabled;
+			});
+
+			if(isRandomCoordinatesEnabled) {
+				randomCoordinatesCheckbox.setAttribute('checked', 'checked');
+			}
+			else {
+				randomCoordinatesCheckbox.removeAttribute('checked');
+			}
+			randomCoordinatesCheckbox.addEventListener('click', (e) => {
+				isRandomCoordinatesEnabled = !isRandomCoordinatesEnabled;
 			});
 		};
 
