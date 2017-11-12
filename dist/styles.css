@@ -1,5 +1,7 @@
 body {
 	background: #353535;
+	color: #dedede;
+	font: 16px/1.4 monospace, sans-serif;
 	margin: 0 auto;
 	padding: 0;
 	width: 1024px;
@@ -7,4 +9,16 @@ body {
 
 canvas {
 	margin: 1em auto 0 auto;
+}
+
+label {
+	font-size: .8em;
+	display: block;
+}
+
+input {
+	border: none;
+	background: #555555;
+	color: #dedede;
+	font-family: monospace, sans-serif;
 }
